@@ -1,0 +1,43 @@
+name: Check Variables
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  set-and-check-vars:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Create variables
+        run: |
+          NAME="MyGitHubAction"
+          RUNNER_IP=$(curl -s https://api.ipify.org)
+          EXTRA_VAR="SomeValue"
+
+          echo "NAME=$NAME" >> "$GITHUB_ENV"
+          echo "RUNNER_IP=$RUNNER_IP" >> "$GITHUB_ENV"
+          echo "EXTRA_VAR=$EXTRA_VAR" >> "$GITHUB_ENV"
+
+      - name: Check if variables are null and echo
+        run: |
+          if [ -n "$NAME" ]; then
+            echo "NAME is not null: $NAME"
+          else
+            echo "NAME is null or empty"
+          fi
+
+          if [ -n "$RUNNER_IP" ]; then
+            echo "RUNNER_IP is not null: $RUNNER_IP"
+          else
+            echo "RUNNER_IP is null or empty"
+          fi
+
+          if [ -n "$EXTRA_VAR" ]; then
+            echo "EXTRA_VAR is not null: $EXTRA_VAR"
+          else
+            echo "EXTRA_VAR is null or empty"
+          fi
