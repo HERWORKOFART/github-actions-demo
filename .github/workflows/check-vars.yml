@@ -1,4 +1,4 @@
-name: Check Variables
+name: Check Secrets
 
 on:
   workflow_dispatch:
@@ -6,23 +6,14 @@ on:
     branches: [ main ]
 
 jobs:
-  set-and-check-vars:
+  check-secrets:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Create variables
-        run: |
-          NAME="MyGitHubAction"
-          RUNNER_IP=$(curl -s https://api.ipify.org)
-          EXTRA_VAR="SomeValue"
-
-          echo "NAME=$NAME" >> "$GITHUB_ENV"
-          echo "RUNNER_IP=$RUNNER_IP" >> "$GITHUB_ENV"
-          echo "EXTRA_VAR=$EXTRA_VAR" >> "$GITHUB_ENV"
-
-      - name: Check if variables are null and echo
+      - name: Access secrets and check if null
+        env:
+          NAME: ${{ secrets.MY_NAME }}
+          RUNNER_IP: ${{ secrets.MY_IP }}
+          EXTRA_VAR: ${{ secrets.EXTRA_VAR }}
         run: |
           if [ -n "$NAME" ]; then
             echo "NAME is not null: $NAME"
